@@ -32,6 +32,7 @@ description: 通过普通 HTTP 连接 ClassIsland，查询和修改主设置、�
 ## 工具速查
 
 - `get_classisland_version_status`：CI 版本、运行状态和 CI 本地日期/时间；涉及周日、日期或时间时使用它，不要调用 Bash。
+- `get_classisland_schedule`：查询今天或指定 `YYYY-MM-DD` 的课程安排；这是日常查询的快捷工具，返回课程、课间、时间和科目信息，优先使用它回答“今天/某天上什么课”。
 - `list_classisland_profiles` / `read_classisland_profile` / `write_classisland_profile`：档案文件及点号路径读写。
 - `create_classisland_profile_from_timetable`：根据星期、时间段和科目创建新档案；服务器自动生成并连接档案、时间表、课表和科目 GUID。
 - `read_classisland_main_config` / `list_classisland_settings` / `update_classisland_main_config`：主配置读取、可持久化字段目录和增量更新。

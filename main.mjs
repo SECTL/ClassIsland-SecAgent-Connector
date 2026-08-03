@@ -13,8 +13,8 @@ export async function activate(api) {
     });
     let payload;
     try { payload = await response.json(); }
-    catch { throw new Error(`ClassIsland 返回了无效 JSON（HTTP ${response.status}）`); }
-    if (!response.ok) throw new Error(payload?.error?.message || payload?.error || `ClassIsland HTTP ${response.status}`);
+    catch { throw new Error(`ClassIsland 返回了无效服务响应（${response.status}）`); }
+    if (!response.ok) throw new Error(payload?.error?.message || payload?.error || `ClassIsland 服务请求失败（${response.status}）`);
     return payload;
   };
 
@@ -29,7 +29,7 @@ export async function activate(api) {
     try {
       const health = await request("/health");
       const catalog = await request("/tools");
-      if (health?.apiVersion !== 1 || catalog?.apiVersion !== 1 || health?.status !== "ok" || !Array.isArray(catalog?.tools)) throw new Error("ClassIsland HTTP API 响应不完整");
+      if (health?.apiVersion !== 1 || catalog?.apiVersion !== 1 || health?.status !== "ok" || !Array.isArray(catalog?.tools)) throw new Error("ClassIsland 服务响应不完整");
 
       unregister();
       for (const tool of catalog.tools) {

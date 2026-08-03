@@ -1,13 +1,13 @@
 {
   "apiVersion": 1,
   "id": "classisland-connector",
-  "name": "SecAgent 联动插件",
-  "version": "1.0.0",
+  "name": "ClassIsland联动插件",
+  "version": "1.0.1",
   "main": "main.mjs",
+  "icon": "icon.svg",
   "permissions": ["agent.tools", "agent.skills", "network.http"],
   "settingsPages": [{
     "id": "connection",
-    "title": "ClassIsland 联动插件",
-    "description": "显示 ClassIsland 端连接状态。连接失败时，请先在 ClassIsland 设置页安装并启动“SecAgent 联动插件”。"
+    "title": "ClassIsland联动插件"
   }]
 }
