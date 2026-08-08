@@ -22,6 +22,8 @@
 
 `Theme`、`ColorSource`、`PrimaryColor`、`CustomForegroundColor`、`IsCustomForegroundColorEnabled`、`BackgroundColor`、`IsCustomBackgroundColorEnabled`、`Opacity`、`Scale`、`RadiusX`、`MainWindowFont`、`MainWindowFontWeight2`、`MainWindowSecondaryFontSize`、`MainWindowBodyFontSize`、`MainWindowEmphasizedFontSize`、`MainWindowLargeFontSize`、`MainWindowLineVerticalMargin`、`IsIslandSeperated`、`IsFallbackModeEnabled`、`TargetLightValue`、`SelectedPlatteIndex`、`WallpaperClassName`、`WallpaperColorPlatte`、`IsWallpaperAutoUpdateEnabled`、`WallpaperAutoUpdateIntervalSeconds`、`UseExperimentColorPickingMethod`。
 
+“主界面调大/调小”“界面缩放”对应 `Scale`（界面缩放，默认 1.0，调大=整体放大）；`MainWindowBodyFontSize`、`MainWindowLargeFontSize` 等只改对应文字大小，不是整体缩放。
+
 ### 通用 General
 
 `AnimationLevel`、`CriticalSafeModeMethod`、`HideMode`、`HideOnClass`、`HideOnFullscreen`、`HideOnMaxWindow`、`HideRules`、`IsCriticalSafeMode`、`IsSplashEnabled`、`IsWaitForTransientDisabled`、`MultiWeekRotationMaxCycle`、`ReduceProgressAccuracy`、`ShowDetailedStatusOnSplash`、`ShowSellingAnnouncement`、`SingleWeekStartTime`、`SplashCustomLogoSource`、`SplashCustomText`、`TaskBarIconClickBehavior`。
@@ -33,6 +35,8 @@
 ### 时钟 Clock
 
 `IsExactTimeEnabled`、`ExactTimeServer`、`IsTimeAutoAdjustEnabled`、`TimeAutoAdjustSeconds`、`TimeOffsetSeconds`。
+
+`TimeOffsetSeconds` 是时间偏移（单位：秒），叠加在 CI 内部时间基准上：**正值让时间变晚（延迟），负值让时间变早（提前）**。当铃声/提醒比真实时间晚（滞后）时，应把偏移**减小（往负方向调）**来抵消；例如“铃声慢了 5 秒”→ `TimeOffsetSeconds` 从 0 改为 **-5**。注意方向：用户说“慢/滞后”要减小偏移，说“快/提前”要增大偏移。
 
 ### 通知 Notification
 

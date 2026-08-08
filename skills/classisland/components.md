@@ -37,6 +37,8 @@
 
 颜色使用 CI 当前 JSON 能接受的颜色表示；写颜色前先读取同类字段的现值作为格式样例。透明度、字号、圆角使用数值。
 
+主界面的**整体缩放**（“主界面调大/调小”）不在组件字段里，对应主配置的 `Scale`（见 `settings.md` 外观段落）；这里的字号字段只影响单个组件的文字大小。
+
 ### 布局
 
 `RelativeLineNumber`、`IsMinWidthEnabled`、`MinWidth`、`IsMaxWidthEnabled`、`MaxWidth`、`IsFixedWidthEnabled`、`FixedWidth`、`HorizontalAlignment`、`IsCustomMarginEnabled`、`MarginLeft`、`MarginTop`、`MarginRight`、`MarginBottom`。
