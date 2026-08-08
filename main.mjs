@@ -1,4 +1,4 @@
-const BASE_URL = "http://127.0.0.1:18789";
+﻿const BASE_URL = process.env.CLASSISLAND_CONNECTOR_URL || "http://127.0.0.1:18789";
 const SKILL_PATH = "skills/classisland";
 
 export async function activate(api) {

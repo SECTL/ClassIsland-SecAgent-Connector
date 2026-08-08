@@ -21,6 +21,14 @@ description: 通过普通 HTTP 连接 ClassIsland，查询和修改主设置、�
 
 `secagent__read_skill` 的 `file` 参数填上面列出的文件名，例如 `components.md`。如果当前 SecAgent 版本不支持 `file` 参数，先读取本 Skill 正文，再按专题文件名使用工作区的 `read` 工具读取；不可退化为 Bash 搜索。
 
+## 时间使用准则（重要）
+
+"现在几点""下节课""今天第几节"等问题中，当前时刻以 CI 工具返回的时间为准，而不是系统时间：
+
+- `get_classisland_schedule` 的返回中包含 `now`（ISO）和 `now_local`（`yyyy-MM-dd HH:mm:ss`）字段，这就是 CI 内部当前时刻（可能被模拟时间覆盖）。判断"当前在哪个时间段"时直接比较 `now_local` 与各节次的起止时间即可。
+- `get_classisland_version_status` 的 `localDateTime`/`localDate` 也是 CI 内部时间。
+- 禁止使用 bash 的 `date` 命令获取时间：那会得到真实系统时间，与 CI 的模拟环境不一致，导致错误答案。
+
 ## 总体工作流
 
 1. 先确认 CI 服务：调用 `classisland-connector__get_classisland_version_status`。
