@@ -43,7 +43,7 @@ description: 通过普通 HTTP 连接 ClassIsland，查询和修改主设置、�
 - `get_classisland_schedule`：查询今天或指定 `YYYY-MM-DD` 的课程安排；这是日常查询的快捷工具，返回课程、课间、时间和科目信息，优先使用它回答“今天/某天上什么课”。
 - `list_classisland_profiles` / `read_classisland_profile` / `write_classisland_profile`：档案文件及点号路径读写。
 - `create_classisland_profile_from_timetable`：根据星期、时间段和科目创建新档案；服务器自动生成并连接档案、时间表、课表和科目 GUID。
-- `read_classisland_main_config` / `list_classisland_settings` / `update_classisland_main_config`：主配置读取、可持久化字段目录和增量更新。
+- `read_classisland_main_config` / `list_classisland_settings` / `update_classisland_main_config`：主配置读取、可持久化字段目录和增量更新。`update_classisland_main_config` 的参数键名必须是 `patch`（不是组件工具用的 `settings_patch`/`common_patch`），`patch` 传 JSON 对象或 JSON 字符串均可，例如 `{"patch":{"Scale":1.2}}`。
 - `list_classisland_component_configs` / `list_classisland_components`：组件方案和当前组件运行时目录。
 - `read_classisland_component_config` / `write_classisland_component_config`：组件 JSON 路径级读写。
 - `update_classisland_component`：按组件 UUID 更新通用高级设置或专属 Settings。

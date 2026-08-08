@@ -12,7 +12,7 @@
 {"patch":{"字段名":新值}}
 ```
 
-调用 `classisland-connector__update_classisland_main_config`。一次只改用户明确要求的字段；写入前先读取当前值，写入后重新读取验证。工具会做类型反序列化、未知属性检查和运行时 `SaveSettings`。
+调用 `classisland-connector__update_classisland_main_config`。**参数键名必须是 `patch`**（不要使用组件工具 `update_classisland_component` 的 `settings_patch`/`common_patch` 键）；`patch` 传 JSON 对象或可解析为对象的 JSON 字符串均可。一次只改用户明确要求的字段；写入前先读取当前值，写入后重新读取验证。工具会做类型反序列化、未知属性检查和运行时 `SaveSettings`。
 
 ## 设置页字段索引
 
