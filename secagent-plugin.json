@@ -5,7 +5,7 @@
   "version": "1.0.1",
   "main": "main.mjs",
   "icon": "icon.svg",
-  "permissions": ["agent.tools", "agent.skills", "network.http"],
+  "permissions": ["agent.tools", "agent.skills", "agent.prompts", "network.http"],
   "settingsPages": [{
     "id": "connection",
     "title": "ClassIsland联动插件"
