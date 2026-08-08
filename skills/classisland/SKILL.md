@@ -47,5 +47,16 @@ description: 通过普通 HTTP 连接 ClassIsland，查询和修改主设置、�
 - `list_classisland_component_configs` / `list_classisland_components`：组件方案和当前组件运行时目录。
 - `read_classisland_component_config` / `write_classisland_component_config`：组件 JSON 路径级读写。
 - `update_classisland_component`：按组件 UUID 更新通用高级设置或专属 Settings。
+- `swap_classisland_classes`：交换两节课（支持跨天）。参数 `date_a`/`class_a`/`date_b`/`class_b`（节次序号 1=第1节），`temporary` 默认 true（写入临时层，不影响原课表）。
+- `change_classisland_class`：把某一天某一节临时改成指定科目（占课）。参数 `date`/`class`/`subject_name`，`temporary` 默认 true。
+- `schedule_classisland_day_as`：把某一天设为使用另一天/另一星期几的课表（调休）。参数 `date` + `source_date` 或 `source_weekday`（0=周日…6=周六）。
+
+## 临时层与调休
+
+ClassIsland 用“临时层”课表承载临时换课/占课，改动写入临时层后**不影响原课表**：
+
+- `swap_classisland_classes` / `change_classisland_class` 的 `temporary=true`（默认）会把改动写入当天临时层课表并标记 `IsChangedClass`。
+- 调休（如“这周日上周一的课”）使用 `schedule_classisland_day_as`：`date` 填目标日期，`source_weekday` 填源星期几（1=周一），或 `source_date` 填源日期；服务端会创建预定课表生效。
+- 任何写操作后调用 `get_classisland_schedule` 重新验证当天课表已生效；不要仅凭口头“已完成”收尾。
 
 任何写操作都必须先读后写；若用户只说“改一下组件”但没有明确字段，先询问目标组件和字段，不要猜测。
