@@ -51,7 +51,7 @@ const refreshScheduleContext = async (request) => {
     if (currentName) parts.push(`当前活动：${currentName}`);
     if (nextName) parts.push(`下个活动：${nextName}`);
     if (dayNames.length) parts.push(`今日活动：${dayNames.join(" → ")}`);
-    parts.push(`（来源：ClassIsland 课表 ${data.date} ${data.weekday || ""}）`);
+    parts.push(`（来源：ClassIsland 课表 ${data.date} ${data.weekday || ""}；以上上下文仅供参考，回答前请调用 get_classisland_schedule 等工具确认。）`);
     scheduleContext = parts.join("\n");
   } catch {
     scheduleContext = "";
