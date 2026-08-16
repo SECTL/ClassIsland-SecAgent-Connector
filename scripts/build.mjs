@@ -13,5 +13,5 @@ fs.copyFileSync(path.join(root, "README.md"), path.join(dist, "README.md"));
 fs.cpSync(path.join(root, "skills"), path.join(dist, "skills"), { recursive: true });
 const archive = new AdmZip();
 archive.addLocalFolder(dist);
-archive.writeZip(path.join(dist, "classisland-connector-1.0.1.zip"));
-console.log("Created dist/classisland-connector-1.0.1.zip");
+archive.writeZip(path.join(dist, "classisland-connector-1.0.2.zip"));
+console.log("Created dist/classisland-connector-1.0.2.zip");

@@ -115,7 +115,7 @@ export async function activate(api) {
     } catch (error) {
       unregister();
       // The connector itself is healthy; the companion service may simply be offline.
-      api.setStatus(`无法连接 ClassIsland：${error instanceof Error ? error.message : String(error)}。请在 ClassIsland 设置页安装并启动“SecAgent 联动插件”。`);
+      api.setStatus(`无法连接 ClassIsland：${error instanceof Error ? error.message : String(error)}。请在 ClassIsland 设置页安装并启动“SecAgent 联动”。`);
     }
   };
 
