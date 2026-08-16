@@ -1,13 +1,14 @@
 {
   "apiVersion": 1,
   "id": "classisland-connector",
-  "name": "ClassIsland联动插件",
-  "version": "1.0.1",
+  "name": "ClassIsland联动",
+  "version": "1.0.2",
   "main": "main.mjs",
   "icon": "icon.svg",
+  "description": "让 SecAgent 帮你操作 ClassIsland 配置档案、换课、调整设置...",
   "permissions": ["agent.tools", "agent.skills", "agent.prompts", "network.http"],
   "settingsPages": [{
     "id": "connection",
-    "title": "ClassIsland联动插件"
+    "title": "ClassIsland联动"
   }]
 }
