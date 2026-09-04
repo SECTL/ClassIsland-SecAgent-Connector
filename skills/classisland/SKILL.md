@@ -59,4 +59,15 @@ ClassIsland 用“临时层”课表承载临时换课/占课，改动写入临�
 - 调休（如“这周日上周一的课”）使用 `schedule_classisland_day_as`：`date` 填目标日期，`source_weekday` 填源星期几（1=周一），或 `source_date` 填源日期；服务端会创建预定课表生效。
 - 任何写操作后调用 `get_classisland_schedule` 重新验证当天课表已生效；不要仅凭口头“已完成”收尾。
 
+## IslandCaller 随机点名（可选插件）
+
+用户要求“点名 / 随机点名 / 抽人 / 抽几个同学”等时，`classisland-connector__call_island_caller` 会由前置规则自动触发，无需调用工具；但模型仍应知晓以下工具契约，供指定人数、指定名单或名单管理场景使用：
+
+- `classisland-connector__call_island_caller`（普通工具）：参数 `count`（1-20，默认 1）和可选 `profile_id`（名单 GUID）。返回 `ok`/`installed`/`ready`/`triggered`/`students`（本次被点学生）与 `message`。若 `ok=false`，如实转述 `message`（通常是 IslandCaller 未安装或尚未就绪），不要声称点名已成功。
+- `classisland-connector__list_island_caller_profiles`（隐藏工具）：列出 IslandCaller 名单的 `id`（GUID）、`name`、`member_count`、是否默认/当前名单。先列名单再按 `id` 操作。
+- `classisland-connector__read_island_caller_roster`（隐藏工具）：读取指定 `profile_id` 名单的原始 `csv` 与结构化 `members`（含 `id`/`name`/`gender`，gender 0=男、1=女、`manual_weight`）。
+- `classisland-connector__write_island_caller_roster`（隐藏工具）：用 `members` 数组覆盖写入指定名单；写入前必须先 `read` 或与用户确认，不要臆造名单。写当前激活名单会自动重载立即生效。
+
+隐藏工具通过 `secagent__call_hidden_tool` 调用，`name` 传上面的完整 key，`arguments` 传工具参数。IslandCaller 名单与 SecRandom 互不关联，两者各有自己的名单文件。
+
 任何写操作都必须先读后写；若用户只说“改一下组件”但没有明确字段，先询问目标组件和字段，不要猜测。
