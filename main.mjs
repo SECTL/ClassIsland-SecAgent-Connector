@@ -1,6 +1,12 @@
 ﻿const BASE_URL = process.env.CLASSISLAND_CONNECTOR_URL || "http://127.0.0.1:18789";
 const SKILL_PATH = "skills/classisland";
 
+// IslandCaller 随机点名前置规则（工具 call_island_caller 由 ClassIsland 端插件动态暴露）
+const ISLAND_CALLER_TOOL = "call_island_caller";
+const ISLAND_CALLER_PROBE_TOOL = "list_island_caller_profiles";
+const ISLAND_CALLER_PRE_RULE = "islandcaller_call";
+let islandCallerPreRuleRegistered = false;
+
 const SCHEDULE_PROMPT = "classisland_schedule_context";
 let scheduleContext = "";
 
@@ -58,6 +64,54 @@ const refreshScheduleContext = async (request) => {
   }
 };
 
+const chineseDigits = { 零: 0, 〇: 0, 一: 1, 二: 2, 两: 2, 三: 3, 四: 4, 五: 5, 六: 6, 七: 7, 八: 8, 九: 9 };
+
+function parseCallCount(value) {
+  if (!value) return 1;
+  if (/^\d+$/u.test(value)) return Number(value);
+  let total = 0;
+  let current = 0;
+  for (const char of value) {
+    if (char in chineseDigits) { current = chineseDigits[char]; continue; }
+    if (char === "十" || char === "百") {
+      const unit = char === "十" ? 10 : 100;
+      total += (current || 1) * unit;
+      current = 0;
+      continue;
+    }
+    return NaN;
+  }
+  return total + current;
+}
+
+/**
+ * 匹配“点名/随机点名/抽人/抽N个同学”等用户指令，命中后直接调用 IslandCaller
+ * 随机点名，绕过 LLM。与 SecRandom 联动插件的前置规则命名与行为保持一致。
+ */
+export function parseIslandCallerPreRule(input) {
+  const text = String(input || "").trim()
+    .replace(/[。！？!?，,；;、]+$/u, "")
+    .replace(/\s+/gu, "")
+    .toLowerCase();
+  const match = text.match(/^(?:请帮我|请|帮我|帮|麻烦(?:你|您)?|用classisland|在classisland|在classisland里|classisland)?(?:随机)?(点名|点个名|抽个人|抽同学|抽人|点人|点|抽选|抽取|抽)(?:(\d+|[零〇一二两三四五六七八九十百]+)(?:个|名|位)?)?(?:人|同学)?(?:吧|啊|呀|呗|嘛|哦|呢|咯|了)?$/u);
+  if (!match) return undefined;
+  const count = parseCallCount(match[2]);
+  if (!Number.isInteger(count) || count < 1) return undefined;
+  return {
+    tool: ISLAND_CALLER_TOOL,
+    arguments: { count },
+    render: renderIslandCallerResult
+  };
+}
+
+export function renderIslandCallerResult(result) {
+  if (!result || typeof result !== "object") return "IslandCaller 点名结果未知。";
+  if (result.ok === false) return result.message || "IslandCaller 点名失败。";
+  const students = Array.isArray(result.students) ? result.students.filter((item) => typeof item === "string" && item) : [];
+  if (students.length > 0) return `已随机点名 ${students.length} 人：${students.join("、")}。`;
+  return result.message || "已触发 IslandCaller 随机点名。";
+}
+
 export async function activate(api) {
   let connected = false;
   let registeredTools = [];
@@ -78,9 +132,27 @@ export async function activate(api) {
   const unregister = () => {
     for (const name of registeredTools) api.unregisterTool(name);
     registeredTools = [];
+    if (typeof api.unregisterPreRule === "function" && islandCallerPreRuleRegistered) {
+      api.unregisterPreRule(ISLAND_CALLER_PRE_RULE);
+      islandCallerPreRuleRegistered = false;
+    }
     if (connected) api.unregisterSkill("classisland");
     scheduleContext = "";
     connected = false;
+  };
+
+  // 探测 ClassIsland 端是否可实际使用 IslandCaller（无副作用，仅读取名单状态）。
+  const probeIslandCaller = async () => {
+    try {
+      const payload = await request(`/tools/${ISLAND_CALLER_PROBE_TOOL}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: "{}"
+      });
+      return payload?.result?.ok === true && payload?.result?.installed === true;
+    } catch {
+      return false;
+    }
   };
 
   const refresh = async () => {
@@ -111,7 +183,17 @@ export async function activate(api) {
       api.registerSkill(SKILL_PATH);
       connected = true;
       await refreshScheduleContext(request);
-      api.setStatus(`已连接 ClassIsland（${registeredTools.length} 个工具）`);
+
+      // 只有 ClassIsland 端真实可用 IslandCaller 时才注册“点名”前置规则，
+      // 避免占用关键词导致 SecRandom 等其它连接插件的点名规则失效。
+      // unregister() 已在新一轮刷新前清掉旧的前置规则，因此这里只需按当前状态重新注册。
+      const islandCallerAvailable = registeredTools.includes(ISLAND_CALLER_TOOL);
+      if (islandCallerAvailable && typeof api.registerPreRule === "function" && !islandCallerPreRuleRegistered && await probeIslandCaller()) {
+        api.registerPreRule(ISLAND_CALLER_PRE_RULE, parseIslandCallerPreRule);
+        islandCallerPreRuleRegistered = true;
+      }
+
+      api.setStatus(`已连接 ClassIsland（${registeredTools.length} 个工具${islandCallerPreRuleRegistered ? "，IslandCaller 可用" : ""}）`);
     } catch (error) {
       unregister();
       // The connector itself is healthy; the companion service may simply be offline.

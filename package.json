@@ -2,6 +2,6 @@
   "name": "classisland-secagent-connector",
   "private": true,
   "type": "module",
-  "scripts": { "check": "node --check main.mjs", "build": "node scripts/build.mjs" },
+  "scripts": { "check": "node --check main.mjs", "test": "node --test test/main.test.mjs", "build": "node scripts/build.mjs" },
   "devDependencies": { "adm-zip": "^0.5.18" }
 }
